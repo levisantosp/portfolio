@@ -1,0 +1,10 @@
+services:
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: portfolio
+    container_name: portfolio
+    restart: unless-stopped
+    ports:
+      - '4444:5173'
