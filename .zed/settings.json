@@ -1,16 +1,16 @@
 {
-	"formatter": {
-		"language_server": {
-			"name": "oxfmt"
-		}
-	},
-	"lsp": {
-		"vtsls": {
-			"initialization_options": {
-				"vtsls": {
-					"autoUseWorkspaceTsdk": true
-				}
-			}
-		}
-	}
+  "formatter": {
+    "language_server": {
+      "name": "oxfmt"
+    }
+  },
+  "lsp": {
+    "vtsls": {
+      "initialization_options": {
+        "vtsls": {
+          "autoUseWorkspaceTsdk": true
+        }
+      }
+    }
+  }
 }

@@ -1,35 +1,35 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"pages": {
-		"home": {
-			"greetings": "Howdy! 👋",
-			"im": "I'm {name}",
-			"role": "Software Developer",
-			"about": {
-				"title": "About Me",
-				"description": "I'm a software developer focused on turning ideas into high-performance systems. I work with full-stack development utilizing TypeScript, React, Svelte, Vue, Node.js, and Bun. Experience in creating dynamic applications that require real-time communication, lightweight architectures, and end-to-end value delivery."
-			}
-		},
-		"projects": {
-			"sabine": "Sabine is a powerful and all-in-one Valorant simulator and esports coverage bot for Discord.",
-			"cidadaomais": "Cidadão+ is a public service guidance platform with categorized search, requirements, step-by-step instructions, and official links.",
-			"visit": {
-				"repository": "Visit repository",
-				"website": "Visit website"
-			},
-			"type": {
-				"web": "Web Application",
-				"mobile": "Mobile Application"
-			}
-		}
-	},
-	"header": {
-		"about": "About",
-		"projects": "Projects",
-		"techs": "Technologies"
-	},
-	"metadata": {
-		"title": "Levi Santos Pires — Software Developer",
-		"description": "Software developer specializing in React Native, React, Vue, TypeScript, Node.js, and Bun."
-	}
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "pages": {
+    "home": {
+      "greetings": "Howdy! 👋",
+      "im": "I'm {name}",
+      "role": "Software Developer",
+      "about": {
+        "title": "About Me",
+        "description": "I'm a software developer focused on turning ideas into high-performance systems. I work with full-stack development utilizing TypeScript, React, Svelte, Vue, Node.js, and Bun. Experience in creating dynamic applications that require real-time communication, lightweight architectures, and end-to-end value delivery."
+      }
+    },
+    "projects": {
+      "sabine": "Sabine is a powerful and all-in-one Valorant simulator and esports coverage bot for Discord.",
+      "cidadaomais": "Cidadão+ is a public service guidance platform with categorized search, requirements, step-by-step instructions, and official links.",
+      "visit": {
+        "repository": "Visit repository",
+        "website": "Visit website"
+      },
+      "type": {
+        "web": "Web Application",
+        "mobile": "Mobile Application"
+      }
+    }
+  },
+  "header": {
+    "about": "About",
+    "projects": "Projects",
+    "techs": "Technologies"
+  },
+  "metadata": {
+    "title": "Levi Santos Pires — Software Developer",
+    "description": "Software developer specializing in React Native, React, Vue, TypeScript, Node.js, and Bun."
+  }
 }

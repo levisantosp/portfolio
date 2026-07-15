@@ -1,12 +1,11 @@
 {
-	"$schema": "./node_modules/oxfmt/configuration_schema.json",
-	"useTabs": true,
-	"singleQuote": true,
-	"trailingComma": "none",
-	"svelte": true,
-	"semi": false,
-	"printWidth": 80,
-	"sortImports": {
-		"newlinesBetween": false
-	}
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "none",
+  "svelte": true,
+  "semi": false,
+  "printWidth": 80,
+  "sortImports": {
+    "newlinesBetween": false
+  }
 }

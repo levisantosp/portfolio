@@ -1,35 +1,35 @@
 {
-	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"pages": {
-		"home": {
-			"greetings": "Olá! 👋",
-			"im": "Me chamo {name}",
-			"role": "Desenvolvedor de Software",
-			"about": {
-				"title": "Sobre mim",
-				"description": "Sou um desenvolvedor de software focado em transformar ideias em sistemas de alta performance. Trabalho com desenvolvimento full-stack utilizando TypeScript, React, Svelte, Vue, Node.js e Bun. Tenho experiência em criar aplicações dinâmicas que exigem comunicação em tempo real, arquiteturas leves e entrega de valor de ponta a ponta."
-			}
-		},
-		"projects": {
-			"sabine": "Sabine é um bot para Discord poderoso e multifuncional, que funciona como um simulador de Valorant e oferece cobertura de e-sports.",
-			"cidadaomais": "O Cidadão+ é uma plataforma de orientação de serviços públicos que oferece pesquisa por categorias, requisitos, instruções passo a passo e links oficiais.",
-			"visit": {
-				"repository": "Visitar repositório",
-				"website": "Visitar site"
-			},
-			"type": {
-				"web": "Aplicativo Web",
-				"mobile": "Aplicativo Móvel"
-			}
-		}
-	},
-	"header": {
-		"about": "Sobre",
-		"projects": "Projetos",
-		"techs": "Tecnologias"
-	},
-	"metadata": {
-		"title": "Levi Santos Pires — Desenvolvedor de Software",
-		"description": "Desenvolvedor de software especializado em React Native, React, Vue, TypeScript, Node.js, and Bun."
-	}
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "pages": {
+    "home": {
+      "greetings": "Olá! 👋",
+      "im": "Me chamo {name}",
+      "role": "Desenvolvedor de Software",
+      "about": {
+        "title": "Sobre mim",
+        "description": "Sou um desenvolvedor de software focado em transformar ideias em sistemas de alta performance. Trabalho com desenvolvimento full-stack utilizando TypeScript, React, Svelte, Vue, Node.js e Bun. Tenho experiência em criar aplicações dinâmicas que exigem comunicação em tempo real, arquiteturas leves e entrega de valor de ponta a ponta."
+      }
+    },
+    "projects": {
+      "sabine": "Sabine é um bot para Discord poderoso e multifuncional, que funciona como um simulador de Valorant e oferece cobertura de e-sports.",
+      "cidadaomais": "O Cidadão+ é uma plataforma de orientação de serviços públicos que oferece pesquisa por categorias, requisitos, instruções passo a passo e links oficiais.",
+      "visit": {
+        "repository": "Visitar repositório",
+        "website": "Visitar site"
+      },
+      "type": {
+        "web": "Aplicativo Web",
+        "mobile": "Aplicativo Móvel"
+      }
+    }
+  },
+  "header": {
+    "about": "Sobre",
+    "projects": "Projetos",
+    "techs": "Tecnologias"
+  },
+  "metadata": {
+    "title": "Levi Santos Pires — Desenvolvedor de Software",
+    "description": "Desenvolvedor de software especializado em React Native, React, Vue, TypeScript, Node.js, and Bun."
+  }
 }
