@@ -20,7 +20,8 @@
       "type": {
         "web": "Aplicativo Web",
         "mobile": "Aplicativo Móvel"
-      }
+      },
+      "altamira_participa": "Uma plataforma para reportar problemas locais, priorizar as necessidades da comunidade e acompanhar solicitações públicas"
     }
   },
   "header": {

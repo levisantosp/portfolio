@@ -20,7 +20,8 @@
       "type": {
         "web": "Web Application",
         "mobile": "Mobile Application"
-      }
+      },
+      "altamira_participa": "A platform for reporting local issues, prioritizing community needs, and tracking public requests."
     }
   },
   "header": {

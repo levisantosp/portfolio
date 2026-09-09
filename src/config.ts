@@ -53,6 +53,14 @@ export const projects: Project[] = [
       'Drizzle ORM'
     ],
     repository: 'https://github.com/levisantosp/cidadaomais'
+  },
+  {
+    id: 'altamira-participa',
+    label: 'Altamira Participa',
+    description: 'pages.projects.altamira_participa',
+    categories: ['web'],
+    techs: ['React', 'Next.js', 'Golang', 'Ent', 'chi', 'Huma'],
+    repository: 'https://github.com/levisantosp/altamira-participa'
   }
 ]
 
