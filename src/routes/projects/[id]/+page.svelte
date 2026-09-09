@@ -20,6 +20,11 @@
   if (!project) {
     error(404, 'Not found')
   }
+
+  function handleImageError(event: Event) {
+    event.currentTarget instanceof HTMLImageElement &&
+      event.currentTarget.remove()
+  }
 </script>
 
 <div class="flex h-full items-center justify-center px-6">
@@ -38,6 +43,7 @@
         height="50"
         alt={project.label}
         class="rounded-md"
+        onerror={handleImageError}
       />
     </CardHeader>
 
