@@ -59,8 +59,9 @@ export const projects: Project[] = [
     label: 'Altamira Participa',
     description: 'pages.projects.altamira_participa',
     categories: ['web'],
-    techs: ['React', 'Next.js', 'Golang', 'Ent', 'chi', 'Huma'],
-    repository: 'https://github.com/levisantosp/altamira-participa'
+    techs: ['Vue', 'Nuxt', 'Golang', 'Ent', 'chi', 'Huma'],
+    repository: 'https://github.com/levisantosp/atm-participa',
+    website: 'https://atm-participa.levisantos.dev/'
   }
 ]
 
