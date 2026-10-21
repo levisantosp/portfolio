@@ -1,4 +1,4 @@
-name: deploy
+name: deploy apps
 on:
   workflow_call:
     inputs:
@@ -14,10 +14,6 @@ on:
       source_ref:
         required: true
         type: string
-  workflow_run:
-    workflows: ['oxc format']
-    types: [completed]
-    branches: [main]
   push:
     branches: [main]
     paths-ignore:
@@ -25,26 +21,15 @@ on:
       - '.gitignore'
       - 'README*'
       - 'LICENSE'
-      - '.zed/*'
 
 jobs:
   deploy:
     name: 'deploy to production'
-    if: |
-      github.event_name == 'workflow_call' ||
-      github.event_name == 'push' ||
-      (
-        github.event_name == 'workflow_run' &&
-        github.event.workflow_run.event == 'push' &&
-        github.event.workflow_run.head_branch == 'main' &&
-        github.event.workflow_run.actor.login != 'github-actions[bot]' &&
-        github.event.workflow_run.conclusion == 'success'
-      )
+    if: github.event_name == 'workflow_call' || github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
-      checks: write
     steps:
       - name: checkout code
         if: github.event_name == 'push'
@@ -52,84 +37,130 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: download deploy metadata
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@main
+      - name: wait for oxc validation
+        if: github.event_name == 'push'
+        id: checks
+        uses: actions/github-script@main
         with:
-          name: deploy-metadata
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: .deploy
+          script: |
+            const workflow = 'oxc.yml'
+            const conclusions = {}
+            const registrationDeadline = Date.now() + 60_000
+            const deadline = Date.now() + 30 * 60_000
+
+            while (!conclusions[workflow]) {
+              const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+                ...context.repo,
+                workflow_id: workflow,
+                branch: 'main',
+                event: 'push',
+                head_sha: context.sha,
+                per_page: 100
+              })
+              const run = runs
+                .filter((run) => run.head_sha === context.sha &&
+                  run.head_branch === 'main' && run.event === 'push')
+                .sort((a, b) => b.id - a.id)[0]
+
+              if (!run && Date.now() >= registrationDeadline) {
+                conclusions[workflow] = 'not_run'
+                core.info(`${workflow}: not run for this commit`)
+              } else if (run?.status === 'completed' && run.conclusion) {
+                conclusions[workflow] = run.conclusion
+                core.info(`${workflow}: ${run.conclusion}`)
+              } else if (Date.now() >= deadline) {
+                conclusions[workflow] = 'timed_out'
+                core.warning(`${workflow}: timed out waiting for validation`)
+              } else {
+                core.info(`${workflow}: waiting (${run?.status ?? 'registration'})`)
+                await new Promise((resolve) => setTimeout(resolve, 10_000))
+              }
+            }
+
+            const conclusion = conclusions[workflow]
+            const allowed = ['success', 'skipped', 'not_run'].includes(conclusion)
+
+            core.setOutput('oxc_allowed', allowed)
+            core.setOutput('oxc_conclusion', conclusion)
+
+            if (!allowed) core.warning('oxc did not pass. Skipping deploy.')
+
+            await core.summary
+              .addTable([
+                [{ data: 'Workflow', header: true }, { data: 'Conclusion', header: true }],
+                [workflow, conclusion]
+              ])
+              .addRaw(`Deploy allowed: ${allowed}\n`)
+              .write()
 
       - name: resolve deploy inputs
         id: resolve
         run: |
           SHOULD_DEPLOY="false"
+          BASE_SHA=""
           DEPLOY_SHA=""
 
-          if [ "${{ github.event_name }}" = "workflow_call" ]; then
-            if [ "${{ inputs.source_event_name }}" = "push" ] && [ "${{ inputs.source_ref }}" = "refs/heads/main" ]; then
+          if [ "$EVENT_NAME" = "workflow_call" ]; then
+            if [ "$SOURCE_EVENT_NAME" = "push" ] && [ "$SOURCE_REF" = "refs/heads/main" ]; then
               SHOULD_DEPLOY="true"
-              DEPLOY_SHA="${{ inputs.deploy_sha }}"
+              BASE_SHA="$INPUT_BASE_SHA"
+              DEPLOY_SHA="$INPUT_DEPLOY_SHA"
             fi
-          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
-            . .deploy/deploy.env
-            SHOULD_DEPLOY="true"
-            DEPLOY_SHA="$deploy_sha"
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            BASE_SHA="${{ github.event.before }}"
-            DEPLOY_SHA="${{ github.sha }}"
+          elif [ "$EVENT_NAME" = "push" ]; then
+            BASE_SHA="$EVENT_BEFORE"
+            SOURCE_SHA="$PUSH_SHA"
+            DEPLOY_SHA="$SOURCE_SHA"
 
             if [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
-              BASE_SHA="$(git rev-list --max-parents=0 "$DEPLOY_SHA")"
+              BASE_SHA="$(git rev-list --max-parents=0 "$SOURCE_SHA")"
             fi
 
-            if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
-              echo "Cannot resolve BASE_SHA ($BASE_SHA) locally. Refusing to guess; skipping direct deploy."
-            elif ! CHANGED_FILES="$(git diff --name-only "$BASE_SHA" "$DEPLOY_SHA")"; then
-              echo "git diff failed. Refusing to guess; skipping direct deploy."
+            if [ "$OXC_ALLOWED" != "true" ]; then
+              echo "oxc conclusion was '$OXC_CONCLUSION'. Skipping deploy."
+            elif ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+              echo "Cannot resolve BASE_SHA ($BASE_SHA) locally. Refusing to guess; skipping deploy."
             else
-              echo "Changed files ($BASE_SHA..$DEPLOY_SHA):"
-              echo "$CHANGED_FILES"
+              SHOULD_DEPLOY="true"
+              git fetch origin refs/heads/main:refs/remotes/origin/main --force
 
-              NON_IGNORED_FILES=""
-
-              while IFS= read -r file; do
-                [ -z "$file" ] && continue
-                case "$file" in
-                  *.md|.gitignore|README*|LICENSE) ;;
-                  *) NON_IGNORED_FILES="$NON_IGNORED_FILES $file" ;;
-                esac
-              done <<< "$CHANGED_FILES"
-
-              if [ -z "$NON_IGNORED_FILES" ]; then
-                SHOULD_DEPLOY="true"
+              if ! git merge-base --is-ancestor "$SOURCE_SHA" origin/main; then
+                echo "Refusing deploy: $SOURCE_SHA is not contained in origin/main."
+                SHOULD_DEPLOY="false"
               else
-                echo "Skipping direct deploy because this push includes files handled by the OXC workflow:"
-                echo "$NON_IGNORED_FILES" | xargs -n1 echo
+                # Include only the oxc autofix commit produced after this push.
+                # Stop before any unrelated commit so another push cannot bypass validation.
+                while IFS= read -r commit; do
+                  [ "$(git show -s --format=%P "$commit")" = "$DEPLOY_SHA" ] || break
+                  [ "$(git show -s --format=%ae "$commit")" = "41898282+github-actions[bot]@users.noreply.github.com" ] || break
+
+                  case "$(git show -s --format=%s "$commit")" in
+                    "style: run oxc autofix")
+                      [ "$OXC_CONCLUSION" = "success" ] || break
+                      ;;
+                    *) break ;;
+                  esac
+
+                  DEPLOY_SHA="$commit"
+                done < <(git rev-list --reverse --ancestry-path "$SOURCE_SHA..origin/main")
               fi
             fi
           fi
 
           {
             echo "should_deploy=$SHOULD_DEPLOY"
+            echo "base_sha=$BASE_SHA"
             echo "deploy_sha=$DEPLOY_SHA"
           } >> "$GITHUB_OUTPUT"
-
-      - name: create pending check run
-        if: github.event_name == 'workflow_run' && steps.resolve.outputs.should_deploy == 'true'
-        id: check
-        uses: actions/github-script@main
-        with:
-          script: |
-            const { data } = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'deploy',
-              head_sha: '${{ steps.resolve.outputs.deploy_sha }}',
-              status: 'in_progress'
-            })
-            core.setOutput('check_id', data.id)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_BEFORE: ${{ github.event.before }}
+          PUSH_SHA: ${{ github.sha }}
+          OXC_ALLOWED: ${{ steps.checks.outputs.oxc_allowed }}
+          OXC_CONCLUSION: ${{ steps.checks.outputs.oxc_conclusion }}
+          SOURCE_EVENT_NAME: ${{ inputs.source_event_name }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          INPUT_BASE_SHA: ${{ inputs.base_sha }}
+          INPUT_DEPLOY_SHA: ${{ inputs.deploy_sha }}
 
       - name: checkout deploy sha
         if: steps.resolve.outputs.should_deploy == 'true'
@@ -182,17 +213,3 @@ jobs:
 
             docker compose up -d --build
           '"
-
-      - name: update check run status
-        if: always() && github.event_name == 'workflow_run' && steps.check.outputs.check_id != ''
-        uses: actions/github-script@main
-        with:
-          script: |
-            const conclusion = '${{ job.status }}' === 'success' ? 'success' : 'failure'
-            await github.rest.checks.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              check_run_id: ${{ steps.check.outputs.check_id }},
-              status: 'completed',
-              conclusion
-            })
