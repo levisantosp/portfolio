@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
+  import type { Pathname } from '$app/types'
   import { Badge } from '$lib/components/ui/badge'
   import { Button } from '$lib/components/ui/button'
   import {
@@ -9,6 +11,7 @@
     CardTitle
   } from '$lib/components/ui/card'
   import { m } from '$lib/paraglide/messages'
+  import { localizeHref } from '$lib/paraglide/runtime'
   import { projects as rawProjects } from '@/config'
 
   const projects = $derived(
@@ -33,7 +36,7 @@
           <div class="flex flex-wrap gap-2 justify-between items-center">
             <CardTitle>
               <a
-                href={`/projects/${item.id}`}
+                href={resolve(localizeHref('/projects/' + item.id) as Pathname)}
                 class="transition-colors hover:text-blue-500"
               >
                 {item.label}

@@ -20,7 +20,7 @@
   import { Copyright, Languages } from '@lucide/svelte'
   import { contacts, name } from '@/config'
 
-  let { children } = $props()
+  const { children } = $props()
 
   const navItems = $derived([
     {
@@ -59,7 +59,7 @@
   <header class="relative flex justify-center items-center h-20 px-5">
     <div class="flex gap-5">
       {#each navItems as item (item.href)}
-        <a href={item.href}>
+        <a href={resolve(localizeHref(item.href) as Pathname)}>
           <span
             class="transition-colors hover:text-blue-500 md:text-xl text-sm"
           >
@@ -75,7 +75,7 @@
         onValueChange={(v) => setLocale(v as never)}
       >
         <SelectTrigger
-          class="cursor-pointer border-none bg-transparent p-0 hover:bg-transparent focus-visible:ring-0 [&>svg:last-child]:hidden"
+          class="cursor-pointer border-none bg-transparent [&>svg:last-child]:hidden"
         >
           <Languages class="size-7 md:size-8" />
         </SelectTrigger>
@@ -83,10 +83,10 @@
           align="end"
           side="bottom"
           sideOffset={4}
-          class="rounded-xl min-w-32"
+          class="rounded-lg min-w-32"
         >
           {#each languages as lang (lang.value)}
-            <SelectItem value={lang.value} class="cursor-pointer rounded-full">
+            <SelectItem value={lang.value} class="cursor-pointer">
               {lang.label}
             </SelectItem>
           {/each}
