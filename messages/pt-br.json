@@ -4,10 +4,10 @@
     "home": {
       "greetings": "Olá! 👋",
       "im": "Me chamo {name}",
-      "role": "Desenvolvedor de Software",
+      "role": "Engenheiro de Software",
       "about": {
         "title": "Sobre mim",
-        "description": "Sou um desenvolvedor de software focado em transformar ideias em sistemas de alta performance. Trabalho com desenvolvimento full-stack utilizando TypeScript, React, Svelte, Vue, Node.js e Bun. Tenho experiência em criar aplicações dinâmicas que exigem comunicação em tempo real, arquiteturas leves e entrega de valor de ponta a ponta."
+        "description": "Sou um engenheiro de software focado em transformar ideias em sistemas de alta performance. Trabalho com desenvolvimento full-stack utilizando TypeScript, React, Svelte, Vue, Node.js e Bun. Tenho experiência em criar aplicações dinâmicas que exigem comunicação em tempo real, arquiteturas leves e entrega de valor de ponta a ponta."
       }
     },
     "projects": {
@@ -30,7 +30,7 @@
     "techs": "Tecnologias"
   },
   "metadata": {
-    "title": "Levi Santos Pires — Desenvolvedor de Software",
-    "description": "Desenvolvedor de software especializado em React Native, React, Vue, TypeScript, Node.js, and Bun."
+    "title": "Levi Santos Pires — Engenheiro de Software",
+    "description": "Engenheiro de software especializado em React Native, React, Vue, TypeScript, Node.js, and Bun."
   }
 }
