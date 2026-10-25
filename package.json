@@ -25,7 +25,7 @@
     "@sveltejs/kit": "^2.70.1",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/bun": "^1.4.2",
+    "@types/bun": "^1.4.4",
     "bits-ui": "^2.16.3",
     "clsx": "^2.1.1",
     "oxfmt": "^0.59.0",
@@ -39,5 +39,5 @@
     "typescript": "^6.0.3",
     "vite": "^8.1.5"
   },
-  "packageManager": "bun@1.4.2"
+  "packageManager": "bun@1.4.4"
 }
